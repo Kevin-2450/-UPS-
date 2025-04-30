@@ -1,5 +1,6 @@
 #include "key.h"
 
+uint8_t key_press_flag = 0;
 
 void key_init(void){
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -34,4 +35,14 @@ void key_init(void){
     NVIC_InitStruct.NVIC_IRQChannelPriority = 0x03;     // 优先级（0-3）
     NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;        // 使能中断
     NVIC_Init(&NVIC_InitStruct);
+}
+
+void Key_Task(void){
+    if(key_press_flag){
+        delay_ms(20);
+        if(KEY == 0){
+            GPIOA->ODR ^= 1<<4;
+        }
+        key_press_flag = 0;
+    }
 }

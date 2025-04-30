@@ -10,8 +10,8 @@ void sc8886_reset(void){
 }
 
 void sc8886_read_all_reg(void){
-    //I2C_Read(SC8886Adress,0x00,&sc8886_reg_cache,60);
-    sc8886_read_reg(0x00,60);
+    I2C_Read(SC8886Adress,0x00,&sc8886_reg_cache,60);
+    //sc8886_read_reg(0x00,60);
 }
 
 
@@ -78,7 +78,7 @@ void sc8886_performance_mode_disable(void){
 }
 
 void sc8886_set_iin(uint16_t ma){
-    uint8_t tmp = ma/50;
+    uint8_t tmp = ma/50 - 1;
     sc8886_reg_cache[0xF] = tmp&0x7F;
     sc8886_write_reg(0xF,1);
 }
@@ -140,9 +140,12 @@ void sc8886_init(void){
     sc8886_reset();
     sc8886_read_all_reg();   // 先读进寄存器再进行其它操作       
     
-    sc8886_reg_cache[0x1] &= ~(1<<7);    // 使能performance模式
-    sc8886_reg_cache[0x31] |= 3<<2;      // 设置电流采样电阻5毫欧
+//    sc8886_reg_cache[0x1] &= ~(1<<7);    // 使能performance模式
+    sc8886_reg_cache[0x1] &= ~(1<<2);       // 关闭PFMmode
+//    sc8886_reg_cache[0x31] |= 3<<2;      // 设置电流采样电阻5毫欧
     sc8886_reg_cache[0x0F] |= 20;        // 设置输入电流限制1A
+//    sc8886_reg_cache[0x31] |= 1<<7;      // 设置IBAT输出
+//    sc8886_reg_cache[0x35] |= 1<<3;       // 使能ICO模式
     sc8886_reg_cache[0x3A] |= 0x5F;      // adc使能
     sc8886_reg_cache[0x3B] |= 3<<6;      // 设置ADC循环转换
     sc8886_update_all_reg();

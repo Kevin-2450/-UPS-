@@ -5,8 +5,18 @@
 
 #include "delay.h"
 
+#include "key.h"
+
 #include "sc8886.h"
 #include "husb238.h"
+
+#define OUTPUT   GPIOA->ODR&1<<4
+
+
+typedef enum{
+    RUN,
+    STOP
+} SYSTEM_MODE;
 
 
 

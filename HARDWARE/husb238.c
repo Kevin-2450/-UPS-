@@ -2,6 +2,7 @@
 
 uint8_t husb238_reg_cache[10];
 uint8_t pd_voltage = 0;             // 当前PD电压
+uint8_t pd_require_voltage = 0;     // 当前请求的PD电压
 float pd_current = 0;               // 当前PD最大电流
 float current_5V = 0;               // 当前5V最大电流
 
@@ -44,14 +45,17 @@ void husb238_analysis(void){
 
 
 void husb238_require_highest_voltage(void){
-    uint8_t i = 5;
-    while(!(PD_Vol_Capability&(1<<i)))i--;          // 寻找最高电压
-    uint8_t highest_voltage = voltage_values[i+1];
-    if(highest_voltage>pd_voltage){
-        husb238_reg_cache[0x08] = pdo_select_value[i+1] << 4; 
-        husb238_reg_cache[0x09] = 1<<0;
-        I2C_Write(HUSB238Adress,0x08,&husb238_reg_cache[0x08],2);
+    if(pd_voltage!=0){
+        uint8_t i = 5;
+        while(!(PD_Vol_Capability&(1<<i)))i--;          // 寻找最高电压
+        pd_require_voltage = voltage_values[i+1];
+        if(pd_require_voltage>pd_voltage){
+            husb238_reg_cache[0x08] = pdo_select_value[i+1] << 4; 
+            husb238_reg_cache[0x09] = 1<<0;
+            I2C_Write(HUSB238Adress,0x08,&husb238_reg_cache[0x08],2);
+        }
     }
+    
 }
 
 

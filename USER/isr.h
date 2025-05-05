@@ -14,11 +14,15 @@
 
 
 typedef enum{
-    RUN,
+    ADAPTER_RUN,
+    NO_ADAPTER_RUN,
     STOP
 } SYSTEM_MODE;
 
+extern SYSTEM_MODE mode;
 
+void IIN_auto_set(void);
+void ICHG_auto_set(void);
 
 #endif
 

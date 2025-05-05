@@ -78,7 +78,7 @@ void sc8886_performance_mode_disable(void){
 }
 
 void sc8886_set_iin(uint16_t ma){
-    uint8_t tmp = ma/50 - 1;
+    uint8_t tmp = ma/50 + 1;
     sc8886_reg_cache[0xF] = tmp&0x7F;
     sc8886_write_reg(0xF,1);
 }
@@ -146,6 +146,7 @@ void sc8886_init(void){
     sc8886_reg_cache[0x0F] |= 20;        // 设置输入电流限制1A
 //    sc8886_reg_cache[0x31] |= 1<<7;      // 设置IBAT输出
 //    sc8886_reg_cache[0x35] |= 1<<3;       // 使能ICO模式
+//    sc8886_reg_cache[0x32] &= ~(1<<7);    // 关闭HIZ引脚的电流设定功能，输入电流限制为内部引脚
     sc8886_reg_cache[0x3A] |= 0x5F;      // adc使能
     sc8886_reg_cache[0x3B] |= 3<<6;      // 设置ADC循环转换
     sc8886_update_all_reg();

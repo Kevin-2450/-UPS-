@@ -19,3 +19,27 @@ void LED_Init(void){
     GPIO_WriteBit(GPIOA,  GPIO_Pin_4 | GPIO_Pin_1, Bit_RESET);
 }
 
+void LED1_On(void) {
+    GPIOC->BSRR = GPIO_BSRR_BR_6;
+}
+
+void LED1_Off(void) {
+    GPIOC->BSRR = GPIO_BSRR_BS_7;
+}
+
+void LED2_On(void) {
+    GPIOC->BSRR = GPIO_BSRR_BR_6;
+}
+
+void LED2_Off(void) {
+    GPIOC->BSRR = GPIO_BSRR_BS_7;
+}
+
+void LED1_Toggle(void) {
+    GPIOC->ODR ^= GPIO_ODR_6;
+}
+
+void LED2_Toggle(void) {
+    GPIOC->ODR ^= GPIO_ODR_7;
+}
+

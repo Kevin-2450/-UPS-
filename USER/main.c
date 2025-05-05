@@ -45,6 +45,8 @@ void LP_Ctrl(void){
     else if(mode == STOP)
     {
         sc8886_performance_mode_disable();
+        LED1_Off();
+        LED2_Off();
         PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
         
         SystemInit();

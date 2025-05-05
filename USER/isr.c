@@ -10,8 +10,6 @@ void EXTI4_15_IRQHandler(void) {
             mode = ADAPTER_RUN;
             TIM1->ARR = 999;
             TIM1->CNT = 0;
-
-            GPIOA->ODR &= ~(1<<6);
         }
         else {
             if(OUTPUT){
@@ -20,7 +18,6 @@ void EXTI4_15_IRQHandler(void) {
             else mode = STOP;
             
             TIM1->ARR = 9999;
-            GPIOA->ODR |= 1<<6;
         }
         // 清除中断挂起标志（必须！）
         EXTI_ClearITPendingBit(EXTI_Line5);
@@ -43,6 +40,14 @@ void TIM1_BRK_UP_TRG_COM_IRQHandler(void) {
             IIN_auto_set();
             ICHG_auto_set();
             
+            if(ICHG>0.1){
+                LED1_On();
+                LED2_Off();
+            }
+            else {
+                LED2_On();
+                LED1_Off();
+            }
         }
         
         if(OUTPUT){
@@ -87,6 +92,8 @@ void ICHG_auto_set(void){
     if(VBAT<16.77){
         set_charge_current(4000);
     }
-    else set_charge_current(0);
+    else {
+        set_charge_current(0);
+    }
     
 }

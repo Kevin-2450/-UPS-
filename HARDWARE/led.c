@@ -20,26 +20,26 @@ void LED_Init(void){
 }
 
 void LED1_On(void) {
-    GPIOC->BSRR = GPIO_BSRR_BR_6;
+    GPIOA->ODR &= ~(1<<6);
 }
 
 void LED1_Off(void) {
-    GPIOC->BSRR = GPIO_BSRR_BS_7;
+    GPIOA->ODR |= 1<<6;
 }
 
 void LED2_On(void) {
-    GPIOC->BSRR = GPIO_BSRR_BR_6;
+    GPIOA->ODR &= ~(1<<7);
 }
 
 void LED2_Off(void) {
-    GPIOC->BSRR = GPIO_BSRR_BS_7;
+    GPIOA->ODR |= 1<<7;
 }
 
 void LED1_Toggle(void) {
-    GPIOC->ODR ^= GPIO_ODR_6;
+    GPIOA->ODR ^= 1<<6;
 }
 
 void LED2_Toggle(void) {
-    GPIOC->ODR ^= GPIO_ODR_7;
+    GPIOA->ODR ^= 1<<7;
 }
 

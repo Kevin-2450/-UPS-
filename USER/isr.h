@@ -6,6 +6,7 @@
 #include "delay.h"
 
 #include "key.h"
+#include "led.h"
 
 #include "sc8886.h"
 #include "husb238.h"
@@ -18,6 +19,7 @@ typedef enum{
     NO_ADAPTER_RUN,
     STOP
 } SYSTEM_MODE;
+
 
 extern SYSTEM_MODE mode;
 

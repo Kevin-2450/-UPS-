@@ -6,5 +6,6 @@
 #include "i2c.h"
 
 void TIM1_Init(void);
+void TIM3_Init(void);
 
 #endif 

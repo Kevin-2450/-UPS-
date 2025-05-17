@@ -10,13 +10,21 @@ void sc8886_reset(void){
 }
 
 void sc8886_read_all_reg(void){
-    I2C_Read(SC8886Adress,0x00,&sc8886_reg_cache,60);
-    //sc8886_read_reg(0x00,60);
+    // uint8_t ret = I2C_Read(SC8886Adress,0x00,&sc8886_reg_cache,60);
+    // uint8_t ret = sc8886_read_reg(0x00,60);
+    // if(ret !=0){
+    //     printf("sc8886 write err code %d\n",ret);
+    // }
+    sc8886_read_reg(0x00,60);
 }
 
 
 void sc8886_update_all_reg(void){
-    //I2C_Write(SC8886Adress,0x00,&sc8886_reg_cache,60);
+    uint8_t ret = I2C_Write(SC8886Adress,0x00,&sc8886_reg_cache,60);
+    // uint8_t ret = sc8886_write_reg(0x00,60);
+    // if(ret != 0){
+    //     printf("sc8886 write err code %d\n",ret);
+    // }
     sc8886_write_reg(0x00,60);
 }
 
@@ -66,14 +74,18 @@ void sc8886_adc_read(void){
 }
 
 void sc8886_performance_mode_enable(void){
+    if(!(sc8886_reg_cache[0x01] & (1<<7))){
+        return;
+    }
     sc8886_reg_cache[0x01] &= ~(1<<7);
-    //I2C_Write(SC8886Adress,0x01,&sc8886_reg_cache[0x01],1);
     sc8886_write_reg(0x01,1);
 }
 
 void sc8886_performance_mode_disable(void){
+    if(sc8886_reg_cache[0x01] & (1<<7)){
+        return;
+    }
     sc8886_reg_cache[0x01] |= 1<<7;
-    //I2C_Write(SC8886Adress,0x01,&sc8886_reg_cache[0x01],1);
     sc8886_write_reg(0x01,1);
 }
 
@@ -91,50 +103,39 @@ void sc8886_init(void){
     // 1. 使能GPIOA时钟
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
     
-    // 2. 配置PA0和PA5
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_5;
+    // 2. 配置PA0和PB0
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;           // 输入模式
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;        // 无上下拉
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_Level_1;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
     
-    // 配置PA5中断
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;           // 输出模式
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;          // 推挽输出
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;        // 无上下拉
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_Level_1;
+    GPIO_WriteBit(GPIOB,  GPIO_Pin_1 , Bit_RESET);
+    
+    // 配置PA0中断
     // 使能SYSCFG时钟
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
     
-    // 将PA5连接到EXTI5
-    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource5);
+    // 将PA0连接到EXTI0
+    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource0);
 
 
-    EXTI_InitStruct.EXTI_Line    = EXTI_Line5;          // 选择EXTI5
+    EXTI_InitStruct.EXTI_Line    = EXTI_Line0;          // 选择EXTI0
     EXTI_InitStruct.EXTI_Mode    = EXTI_Mode_Interrupt; // 中断模式
     EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising_Falling; // 双边沿触发
     EXTI_InitStruct.EXTI_LineCmd = ENABLE;              // 使能EXTI线
     EXTI_Init(&EXTI_InitStruct);
 
-    NVIC_InitStruct.NVIC_IRQChannel = EXTI4_15_IRQn;    // PA5使用EXTI4_15通道
+    NVIC_InitStruct.NVIC_IRQChannel = EXTI0_1_IRQn;    
     NVIC_InitStruct.NVIC_IRQChannelPriority = 0x01;     // 最高优先级（0-3）
     NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;        // 使能中断
     NVIC_Init(&NVIC_InitStruct);
 
-//    // 配置PA0中断
-//    // 使能SYSCFG时钟
-//    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-//    
-//    // 将PA5连接到EXTI5
-//    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource0);
-
-
-//    EXTI_InitStruct.EXTI_Line    = EXTI_Line0;          // 选择EXTI0
-//    EXTI_InitStruct.EXTI_Mode    = EXTI_Mode_Interrupt; // 中断模式
-//    EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising_Falling; // 双边沿触发
-//    EXTI_InitStruct.EXTI_LineCmd = ENABLE;              // 使能EXTI线
-//    EXTI_Init(&EXTI_InitStruct);
-
-//    NVIC_InitStruct.NVIC_IRQChannel = EXTI0_1_IRQn;    // PA0使用EXTI0_1通道
-//    NVIC_InitStruct.NVIC_IRQChannelPriority = 0x03;     // 优先级（0-3）
-//    NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;        // 使能中断
-//    NVIC_Init(&NVIC_InitStruct);
     
     // 初始化SC8886寄存器
     sc8886_reset();
@@ -145,10 +146,11 @@ void sc8886_init(void){
 //    sc8886_reg_cache[0x31] |= 3<<2;      // 设置电流采样电阻5毫欧
     sc8886_reg_cache[0x0F] |= 20;        // 设置输入电流限制1A
 //    sc8886_reg_cache[0x31] |= 1<<7;      // 设置IBAT输出
-//    sc8886_reg_cache[0x35] |= 1<<3;       // 使能ICO模式
-//    sc8886_reg_cache[0x32] &= ~(1<<7);    // 关闭HIZ引脚的电流设定功能，输入电流限制为内部引脚
+    sc8886_reg_cache[0x35] |= 1<<3;       // 使能ICO模式
+    sc8886_reg_cache[0x32] &= ~(1<<7);    // 关闭HIZ引脚的电流设定功能，输入电流限制为内部引脚
     sc8886_reg_cache[0x3A] |= 0x5F;      // adc使能
     sc8886_reg_cache[0x3B] |= 3<<6;      // 设置ADC循环转换
+//    sc8886_reg_cache[0x20] &= ~(0x08);
     sc8886_update_all_reg();
     
 //    sc8886_read_all_reg();

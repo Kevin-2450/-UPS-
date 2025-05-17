@@ -5,7 +5,7 @@
 
 #include "delay.h"
 
-#define KEY    (GPIOB->IDR&1<<1)
+#define KEY    (GPIOA->IDR&1<<5)
 
 void key_init(void);
 

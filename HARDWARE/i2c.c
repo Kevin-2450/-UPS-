@@ -30,7 +30,7 @@ void I2C1_Init(void) {
 	I2C_InitStructure.I2C_DigitalFilter = 0x01;
 	I2C_InitStructure.I2C_OwnAddress1=0x00;
 	//I2C_InitStructure.I2C_Timing = 0x00201D2B;//100Khz
-	I2C_InitStructure.I2C_Timing =0x10950C27;//400Khz
+	I2C_InitStructure.I2C_Timing =0x0010020A;//400Khz
 	I2C_InitStructure.I2C_AnalogFilter = I2C_AnalogFilter_Enable;
 	
 	I2C_Init(I2C1, &I2C_InitStructure);	
@@ -47,7 +47,7 @@ uint8_t  I2C_Read(uint8_t DevAddr, uint8_t RegAddr, uint8_t* pBuffer, uint8_t Nu
 	{
 		if((timeout--) == 0)
 		{
-			return 0;
+			return 1;
 		}
 	}
 	/* Generate start & wait event detection */
@@ -57,7 +57,7 @@ uint8_t  I2C_Read(uint8_t DevAddr, uint8_t RegAddr, uint8_t* pBuffer, uint8_t Nu
 	{
 		if((timeout--) == 0)
 		{   
-			return 0;
+			return 2;
 		}
 	}
 	I2C_SendData(I2C1, RegAddr);
@@ -66,7 +66,7 @@ uint8_t  I2C_Read(uint8_t DevAddr, uint8_t RegAddr, uint8_t* pBuffer, uint8_t Nu
 	{
 		if((timeout--) == 0)
 		{
-			return 0;
+			return 3;
 		}
 	}
 	/* Send STRAT condition a second time */  
@@ -81,7 +81,7 @@ uint8_t  I2C_Read(uint8_t DevAddr, uint8_t RegAddr, uint8_t* pBuffer, uint8_t Nu
 		{
 			if((timeout--) == 0)
 			{
-				return 0;
+				return 4;
 			}
 		}
 		/* Read a byte from the EEPROM */
@@ -98,10 +98,10 @@ uint8_t  I2C_Read(uint8_t DevAddr, uint8_t RegAddr, uint8_t* pBuffer, uint8_t Nu
 	{
 		if((timeout--) == 0)
 		{
-			return 0;
+			return 5;
 		}
 	}
-	return 1;
+	return 0;
 }
 
 
@@ -115,7 +115,7 @@ uint8_t  I2C_Write(uint8_t DevAddr, uint8_t RegAddr,uint8_t* pBuffer, uint8_t Nu
 	{
 		if((timeout--) == 0)
 		{
-			return 0;
+			return 1;
 		}
 	}
 	
@@ -127,7 +127,7 @@ uint8_t  I2C_Write(uint8_t DevAddr, uint8_t RegAddr,uint8_t* pBuffer, uint8_t Nu
 	{
 		if((timeout--) == 0)
 		{
-			return 0;
+			return 2;
 		}
 	}
 	
@@ -138,7 +138,7 @@ uint8_t  I2C_Write(uint8_t DevAddr, uint8_t RegAddr,uint8_t* pBuffer, uint8_t Nu
 	{
 		if((timeout--) == 0)
 		{
-			return 0;
+			return 3;
 		}
 	}
 	
@@ -153,7 +153,7 @@ uint8_t  I2C_Write(uint8_t DevAddr, uint8_t RegAddr,uint8_t* pBuffer, uint8_t Nu
 		{
 			if((timeout--) == 0)
 			{
-				return 0;
+				return 4;
 			}
 		}
 		/* Send the current byte */
@@ -168,11 +168,11 @@ uint8_t  I2C_Write(uint8_t DevAddr, uint8_t RegAddr,uint8_t* pBuffer, uint8_t Nu
 	{
 		if((timeout--) == 0)
 		{
-			return 0;
+			return 5;
 		}
 	}
 	
-	return 1;
+	return 0;
 	
 }
 

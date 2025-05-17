@@ -1,0 +1,3 @@
+Load "..\\OUTPUT\\FW.axf" 
+Erase Done.Programming Done.Verify OK.Application running ...
+Flash Load finished at 19:44:18

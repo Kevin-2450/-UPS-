@@ -14,7 +14,7 @@ void LED_Init(void){
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;        // 无上下拉
     GPIO_Init(GPIOA, &GPIO_InitStructure);
     
-    // 3. 可选：初始化输出电平
+    // 3.初始化电平
     GPIO_WriteBit(GPIOA, GPIO_Pin_6 | GPIO_Pin_7, Bit_SET); 
     GPIO_WriteBit(GPIOA,  GPIO_Pin_4 | GPIO_Pin_1, Bit_RESET);
 }

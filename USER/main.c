@@ -27,12 +27,14 @@ int main(){
     
     sc8886_init();
     TIM1_Init();
+    TIM3_Init();
 
     printf("init successful @%dMHz\n",SystemCoreClock/1000000);
+//    GPIOA->ODR |= 1<<1;
     
     while(1){
-        LP_Ctrl();
         __WFI();    // 主循环等待中断，进入低功耗模式
+        LP_Ctrl();
     }
 }
 
@@ -44,13 +46,18 @@ void LP_Ctrl(void){
     }
     else if(mode == STOP)
     {
-        sc8886_performance_mode_disable();
-        LED1_Off();
+        sc8886_performance_mode_disable();          // SC8886进入低功耗模式
+        LED1_Off();                                 // 关闭LED1
         LED2_Off();
+        GPIOA->ODR &= ~(1<<1);
+
+        // 关闭中断
+        __disable_irq();
         PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
         
         SystemInit();
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
+        __enable_irq();
         if(CHRG_OK){
             mode = ADAPTER_RUN;
         }

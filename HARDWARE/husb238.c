@@ -21,7 +21,12 @@ const uint8_t pdo_select_value[] = {0, 1, 2, 3, 8, 9, 10};
 
 // ¶ÁÈ¡husb238ËùÓĞ¼Ä´æÆ÷
 void husb238_read_all_reg(void){
-    if(!I2C_Read(HUSB238Adress,0x00,&husb238_reg_cache,10))printf("husb238 read err\n");
+    uint8_t ret = I2C_Read(HUSB238Adress,0x00,&husb238_reg_cache,10);
+    // if(ret != 0){
+    //     printf("husb238 read error code %d\n", ret);
+    //     return;
+    // }
+
 }
 
 

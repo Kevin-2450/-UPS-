@@ -10,6 +10,8 @@
 extern float pd_current,current_5V;
 extern uint8_t pd_voltage;
 extern uint8_t pd_require_voltage;
+extern float PD_Cur_Capability[6];
+extern const uint8_t voltage_values[];
 
 void husb238_read_all_reg(void);
 void husb238_analysis(void);

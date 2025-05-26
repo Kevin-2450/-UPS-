@@ -65,14 +65,6 @@ void TIM1_BRK_UP_TRG_COM_IRQHandler(void) {
             IIN_auto_set();
             ICHG_auto_set();
             
-            // 控制风扇
-            if(IIN >1.1 || IDCHG > 1.1){
-                GPIOA->ODR |= 1<<1;
-            }
-            else{
-                GPIOA->ODR &= ~(1<<1);
-            }
-
             // 控制LED
             if(ICHG>0.1){
                 LED2_On();
@@ -82,10 +74,20 @@ void TIM1_BRK_UP_TRG_COM_IRQHandler(void) {
                 LED1_On();
                 LED2_Off();
             }
-        }
+        } 
         else if(OUTPUT){
             sc8886_adc_read();
         }
+        
+        // 控制风扇
+        if(IIN >1.1 || IDCHG > 1.1){
+            GPIOA->ODR |= 1<<1;
+        }
+        else{
+            GPIOA->ODR &= ~(1<<1);
+        }
+
+
         // 清除中断标志
         TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
     }
